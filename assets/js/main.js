@@ -278,15 +278,19 @@ function init() {
 	punch: 57, //9
 	kick: 48 //0
     }
-    //Set backgrounds
+    //Load starting images
+    startImageCount=2;
+    loadedCount=0;
     background = new Image();
+    background.onload=imageLoaded;
     background.src = 'assets/images/background.png';
+    startScreen = new Image();
+    startScreen.onload=imageLoaded;
+    startScreen.src = 'assets/images/start.png';
     //Set music
     background_music = new Audio('assets/sound/background.wav');
     background_music.loop = true;
     background_music.play();
-    startScreen = new Image();
-    startScreen.src = 'assets/images/start.png';
     if (window.webkitRequestAnimationFrame) {
 	window.onEachFrame = function(turn) {
 	    var _turn = function() { turn(); animationRequest = webkitRequestAnimationFrame(_turn); }
@@ -373,6 +377,7 @@ function awaitRound(message, firstRound) {
 	    beginRound(firstRound);
 	}
     }, false);
+    gameContext.drawImage(background,0,0);
     gameContext.drawImage(startScreen,0,0);
     gameContext.font = "italic 36px Arial Black";
     gameContext.fillStyle = "#FFFFFF";
@@ -380,10 +385,15 @@ function awaitRound(message, firstRound) {
     gameContext.fillText(message, 450, 135);
 }
 
+//We wait for all startup images to load before starting the game
+function imageLoaded() {
+    loadedCount++;
+
+    if (loadedCount >= startImageCount) {
+	awaitRound("HTML5 BOXING!", true);
+    }
+}
+
 function startup() {
     init();
-    setTimeout(function() {
-	gameContext.drawImage(background,0,0);
-	awaitRound("HTML5 BOXING!", true);
-    }, 100);
 }
